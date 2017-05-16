@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
+#include "pcm.h"
 
-#define PCM_N_BANKS				4
-#define PCM_SEGMENTS_PER_BANK	1024
-#define	PCM_SEGMENT_SIZE		2048
-#define PCM_MEM_SIZE	\
-	(PCM_N_BANKS * PCM_SEGMENTS_PER_BANK * PCM_SEGMENT_SIZE)
-
-#define PCM_INIT_CHUNK_SIZE	512
+struct pcm_threads *pcm_threads;
 
 unsigned long pcm_word_cnt(char *pcm_mem)
 {
@@ -30,53 +19,14 @@ unsigned long pcm_word_cnt(char *pcm_mem)
 	return word_cnt;
 }
 
-char *pcm_mem_alloc()
-{
-	char *pcm_mem;
-
-	pcm_mem = (char *) calloc(PCM_MEM_SIZE, sizeof(char));
-	if (!pcm_mem) {
-		return pcm_mem;
-	}
-
-	return pcm_mem;
-}
-
-unsigned long pcm_mem_init(char *pcm_mem, char *file)
-{
-	int fd;
-	unsigned long rd_cnt = 0, temp_rd_cnt;
-
-	fd = open (file, O_RDONLY);
-	if (fd < 0) {
-		return fd;
-	}
-
-	while (1) {
-
-		temp_rd_cnt = read(fd, pcm_mem + rd_cnt, PCM_INIT_CHUNK_SIZE);
-
-		if (temp_rd_cnt < 0) {
-			return temp_rd_cnt;
-		} else {
-			rd_cnt += temp_rd_cnt;
-
-			if (temp_rd_cnt < PCM_INIT_CHUNK_SIZE || rd_cnt >= PCM_MEM_SIZE)
-				break;
-		}
-
-	}
-
-	return rd_cnt;
-}
-
 int main(int argc, char *argv[])
 {
 	char *pcm_mem;
 	unsigned long pcm_data_size;
+	unsigned int pcm_n_threads;
 
-	if (argc != 2) {
-		printf("Usage: pcm <input_text_file>\n");
+	if (argc != 3) {
+		printf("Usage: pcm <input_text_file> <num_threads>\n");
 		return -1;
 	}
 
@@ -92,7 +42,15 @@ int main(int argc, char *argv[])
 		return errno;
 	}
 
-	printf("%s\n\n", pcm_mem);
+	sscanf(argv[2], "%u", &pcm_n_threads);
+
+	pcm_threads = pcm_threads_spawn(pcm_n_threads);
+	if (!pcm_threads) {
+		perror("Failed to spawn the threads");
+		return errno;
+	}
+
+	pcm_threads_join(pcm_threads, pcm_n_threads);
 
 	printf("Word count: %ld\n", pcm_word_cnt(pcm_mem));
 

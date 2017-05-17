@@ -14,8 +14,8 @@ void *pcm_thread_func(void *data)
 	/* Access the bank's memory as a critical section of code */
 	sem_wait(&pcm_bank_lock[pcm_thread->bank]);
 
-	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
-			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
+//	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
+//			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
 
 	pcm_word_cnt_local(pcm_thread->mem_base, pcm_thread->mem_size);
 

@@ -22,6 +22,11 @@ char *pcm_mem_alloc()
 	return pcm_mem;
 }
 
+void pcm_mem_dealloc(char *pcm_mem)
+{
+	free(pcm_mem);
+}
+
 unsigned long pcm_mem_init(char *pcm_mem, char *file)
 {
 	int fd;

@@ -1,4 +1,5 @@
 #include "pcm.h"
+#include "pcm_apps.h"
 
 void pcm_alloc_bank(struct pcm_threads *pcm_thread)
 {
@@ -15,6 +16,8 @@ void *pcm_thread_func(void *data)
 
 	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
 			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
+
+	pcm_word_cnt_local(pcm_thread->mem_base, pcm_thread->mem_size);
 
 	sem_post(&pcm_bank_lock[pcm_thread->bank]);
 

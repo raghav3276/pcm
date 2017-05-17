@@ -10,11 +10,14 @@
 #include <semaphore.h>
 #include <errno.h>
 
-#define PCM_N_BANKS				4
-#define PCM_SEGMENTS_PER_BANK	1024
-#define	PCM_SEGMENT_SIZE		2048
-#define PCM_MEM_SIZE	\
-	(PCM_N_BANKS * PCM_SEGMENTS_PER_BANK * PCM_SEGMENT_SIZE)
+#define PCM_N_BANKS		4
+#define PCM_BANK_SIZE	((unsigned long) 256 * 1024 * 1024)
+#define PCM_MEM_SIZE	PCM_N_BANKS * PCM_BANK_SIZE
+
+//#define PCM_SEGMENTS_PER_BANK	1024
+//#define	PCM_SEGMENT_SIZE		2048
+//#define PCM_MEM_SIZE
+//	(PCM_N_BANKS * PCM_SEGMENTS_PER_BANK * PCM_SEGMENT_SIZE)
 
 #define PCM_INIT_CHUNK_SIZE	512
 

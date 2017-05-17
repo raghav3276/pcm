@@ -27,14 +27,14 @@ void *pcm_thread_func(void *data)
 	struct pcm_threads *pcm_thread = (struct pcm_threads *) data;
 
 	/* Access the bank's memory as a critical section of code */
-	sem_wait(&pcm_bank_lock[pcm_thread->bank]);
+//	sem_wait(&pcm_bank_lock[pcm_thread->bank]);
 
 	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
 			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
 
 	local_word_cnt = pcm_word_cnt_local(pcm_thread->mem_base, pcm_thread->mem_size);
 
-	sem_post(&pcm_bank_lock[pcm_thread->bank]);
+//	sem_post(&pcm_bank_lock[pcm_thread->bank]);
 
 	pcm_word_cnt_update(local_word_cnt);
 

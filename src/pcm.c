@@ -41,13 +41,13 @@ int main(int argc, char *argv[])
 		goto out1;
 	}
 
+	gettimeofday(&t1, NULL);
+
 	pcm_threads = pcm_threads_spawn(pcm_n_threads, pcm_mem);
 	if (!pcm_threads) {
 		perror("Failed to spawn the threads");
 		return errno;
 	}
-
-	gettimeofday(&t1, NULL);
 
 	pcm_threads_join(pcm_threads, pcm_n_threads);
 

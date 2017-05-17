@@ -5,19 +5,31 @@
 
 #define TO_USEC	((unsigned long) 1000000)
 
+void print_usage()
+{
+	printf("Usage: pcm <input_text_file> <num_threads> <bank_alloc_type>\n");
+
+	printf("\nThe number of threads should be in the multiples of the number of banks(%u)\n", PCM_N_BANKS);
+
+	printf("\nBank allocation types:\n");
+	printf("0: Round robin\n");
+	printf("1: Forced allocation to bank 0\n");
+	printf("2: Random allocation\n");
+}
+
 int main(int argc, char *argv[])
 {
 	char *pcm_mem;
 	unsigned long pcm_data_size;
 	unsigned int pcm_n_threads;
+	int bank_alloc_type;
 	struct pcm_threads *pcm_threads;
 
 	struct timeval t1, t2;
 	float execution_time;
 
-	if (argc != 3) {
-		printf("Usage: pcm <input_text_file> <num_threads>\n");
-		printf("\nThe number of threads should be in the multiples of the number of banks(%u)\n", PCM_N_BANKS);
+	if (argc != 4) {
+		print_usage();
 		return -1;
 	}
 
@@ -41,9 +53,11 @@ int main(int argc, char *argv[])
 		goto out1;
 	}
 
+	sscanf(argv[3], "%d", &bank_alloc_type);
+
 	gettimeofday(&t1, NULL);
 
-	pcm_threads = pcm_threads_spawn(pcm_n_threads, pcm_mem);
+	pcm_threads = pcm_threads_spawn(pcm_n_threads, pcm_mem, bank_alloc_type);
 	if (!pcm_threads) {
 		perror("Failed to spawn the threads");
 		return errno;

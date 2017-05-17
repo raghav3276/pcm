@@ -1,10 +1,24 @@
 #include "pcm.h"
 #include "pcm_apps.h"
 
-void pcm_alloc_bank(struct pcm_threads *pcm_thread)
+void pcm_alloc_bank(struct pcm_threads *pcm_thread, int bank_alloc_type)
 {
-	/* Round robin allocation */
-	pcm_thread->bank = pcm_thread->id % PCM_N_BANKS;
+	switch (bank_alloc_type) {
+	case 2:
+		/* Random allocation */
+		pcm_thread->bank = rand() % PCM_N_BANKS;
+		break;
+
+	case 1:
+		/* Static forced allocation */
+		pcm_thread->bank = 0;
+		break;
+
+	case 0:
+	default:
+		/* Round robin allocation */
+		pcm_thread->bank = pcm_thread->id % PCM_N_BANKS;
+	}
 }
 
 void *pcm_thread_func(void *data)
@@ -14,8 +28,8 @@ void *pcm_thread_func(void *data)
 	/* Access the bank's memory as a critical section of code */
 	sem_wait(&pcm_bank_lock[pcm_thread->bank]);
 
-//	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
-//			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
+	printf("Thread: %d; Bank: %d; mem_base: %p; mem_size: %ld\n",
+			pcm_thread->id, pcm_thread->bank, pcm_thread->mem_base, pcm_thread->mem_size);
 
 	pcm_word_cnt_local(pcm_thread->mem_base, pcm_thread->mem_size);
 
@@ -24,13 +38,15 @@ void *pcm_thread_func(void *data)
 	pthread_exit(0);
 }
 
-struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem)
+struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem, int bank_alloc_type)
 {
 	int retval;
 	unsigned int i;
 	unsigned long mem_per_bank;
 	unsigned long mem_per_thread;
 	struct pcm_threads *pcm_threads;
+
+	srand(time(NULL));
 
 	pcm_threads = (struct pcm_threads *) calloc(n_threads, sizeof(*pcm_threads));
 	if (!pcm_threads)
@@ -43,7 +59,7 @@ struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem)
 
 		pcm_threads[i].id = i;
 
-		pcm_alloc_bank(&pcm_threads[i]);
+		pcm_alloc_bank(&pcm_threads[i], bank_alloc_type);
 
 		pcm_threads[i].mem_size = mem_per_thread;
 		pcm_threads[i].mem_base = mem +

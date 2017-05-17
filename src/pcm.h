@@ -37,7 +37,7 @@ struct pcm_threads {
 	pthread_t pthread;
 };
 
-struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem);
+struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem, int bank_alloc_type);
 void pcm_threads_join(struct pcm_threads *pcm_threads, unsigned int n_threads);
 
 #endif /* PCM_H_ */

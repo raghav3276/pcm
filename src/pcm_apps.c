@@ -9,7 +9,7 @@ struct pcm_word_cnt {
 
 static struct pcm_word_cnt pcm_word_cnt;
 
-static void pcm_word_cnt_update(unsigned long local_word_cnt)
+void pcm_word_cnt_update(unsigned long local_word_cnt)
 {
 	sem_wait(&pcm_word_cnt.word_cnt_lock);
 	pcm_word_cnt.word_cnt += local_word_cnt;
@@ -24,14 +24,13 @@ unsigned long pcm_word_cnt_local(char *pcm_mem, unsigned long mem_size)
 		return 0;
 
 	while (*pcm_mem && mem_size) {
+
 		if (*pcm_mem == ' ' || *pcm_mem == '\n' || *pcm_mem == '\t')
 			word_cnt++;
 
 		pcm_mem++;
 		mem_size--;
 	}
-
-	pcm_word_cnt_update(word_cnt);
 
 	return word_cnt;
 }

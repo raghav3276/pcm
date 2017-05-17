@@ -21,15 +21,20 @@
 extern sem_t pcm_bank_lock[PCM_N_BANKS];
 
 char *pcm_mem_alloc();
+void pcm_mem_dealloc(char *pcm_mem);
 unsigned long pcm_mem_init(char *pcm_mem, char *file);
 
 struct pcm_threads {
 	int id;
 	int bank;
+
+	char *mem_base;
+	unsigned long mem_size;
+
 	pthread_t pthread;
 };
 
-struct pcm_threads *pcm_threads_spawn(unsigned int n_threads);
+struct pcm_threads *pcm_threads_spawn(unsigned int n_threads, char *mem);
 void pcm_threads_join(struct pcm_threads *pcm_threads, unsigned int n_threads);
 
 #endif /* PCM_H_ */

@@ -18,14 +18,14 @@ void pcm_word_cnt_update(unsigned long local_word_cnt)
 
 unsigned long pcm_word_cnt_local(char *pcm_mem, unsigned long mem_size)
 {
-	unsigned long word_cnt = 1;
+	unsigned long word_cnt = 0;
 
 	if (!pcm_mem)
 		return 0;
 
 	while (*pcm_mem && mem_size) {
 
-		if (*pcm_mem == ' ' || *pcm_mem == '\n' || *pcm_mem == '\t')
+		if (*pcm_mem == ' ' || *pcm_mem == '\n' || *pcm_mem == '\t' || *pcm_mem == EOF)
 			word_cnt++;
 
 		pcm_mem++;

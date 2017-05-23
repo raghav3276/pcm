@@ -5,6 +5,8 @@
 
 #define TO_USEC	((unsigned long) 1000000)
 
+//char pcm_mem[PCM_MEM_SIZE];
+
 void print_usage()
 {
 	printf("Usage: pcm <input_text_file> <num_threads> <bank_alloc_type>\n");
@@ -25,6 +27,11 @@ int main(int argc, char *argv[])
 	int bank_alloc_type;
 	struct pcm_threads *pcm_threads;
 
+	unsigned int i;
+	char *temp_pcm;
+	unsigned int granularity;
+	char ch;
+
 	struct timeval t1, t2;
 	float execution_time;
 
@@ -41,11 +48,38 @@ int main(int argc, char *argv[])
 
 	pcm_word_cnt_init();
 
+	printf("Before mem alloc..\n");
+
 	pcm_mem = pcm_mem_alloc();
 	if (!pcm_mem) {
 		perror("Failed to allocate PCM");
 		return errno;
 	}
+
+	printf("Mem allocated.. Now initializing..\n");
+
+//	temp_pcm = pcm_mem;
+//	granularity = 1024 * PCM_N_BANKS;
+//	granularity = 1;
+
+//	ariel_enable();
+
+//	for (i = 0; i < PCM_MEM_SIZE / granularity ;i++) {
+//		*temp_pcm = 'a';
+//		temp_pcm += granularity;
+//	}
+//
+//	printf("Done init.. Now reading\n");
+//	temp_pcm = pcm_mem;
+//	for (i = 0; i < PCM_MEM_SIZE / granularity; i++) {
+//		ch = *temp_pcm;
+////		printf("i: %d; ch = %c\n", i, ch);
+//	}
+
+
+
+//	printf("%p: %d\n", pcm_mem, *pcm_mem);
+
 
 	pcm_data_size = pcm_mem_init(pcm_mem, argv[1]);
 	if (pcm_data_size < 0) {
@@ -53,9 +87,13 @@ int main(int argc, char *argv[])
 		goto out1;
 	}
 
+	printf("Done mem init..\n");
+
 	sscanf(argv[3], "%d", &bank_alloc_type);
 
 	gettimeofday(&t1, NULL);
+
+	ariel_enable();
 
 	pcm_threads = pcm_threads_spawn(pcm_n_threads, pcm_mem, bank_alloc_type);
 	if (!pcm_threads) {

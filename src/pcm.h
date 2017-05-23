@@ -10,9 +10,13 @@
 #include <semaphore.h>
 #include <errno.h>
 
+#include <arielapi.h>
+
 #define PCM_N_BANKS		4
-#define PCM_BANK_SIZE	((unsigned long) 256 * 1024 * 1024)
+//#define PCM_BANK_SIZE	((unsigned long) 256 * 1024 * 1024)
+#define PCM_BANK_SIZE	((unsigned long) 10 * 256 * 1024)
 #define PCM_MEM_SIZE	PCM_N_BANKS * PCM_BANK_SIZE
+#define PCM_ROW_BUFF_SIZE	1024	// 8 Kbits
 
 //#define PCM_SEGMENTS_PER_BANK	1024
 //#define	PCM_SEGMENT_SIZE		2048

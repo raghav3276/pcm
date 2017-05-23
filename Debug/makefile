@@ -29,7 +29,7 @@ all: pcm
 pcm: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o"pcm" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L/home/cass/local/sstelements-7.0.0/lib/sst-elements-library -o"pcm" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
